@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <div class="actions"><a class="btn" href="{% url 'breakage_create' %}">Dodaj stłuczki</a></div>
+  <h1>Stłuczki</h1>
+  <table>
+    <tr><th>Data</th><th>Wkładki</th><th>Uwagi</th></tr>
+    {% for item in breakages %}
+    <tr><td>{{ item.breakage_date }}</td><td>{{ item.quantity_in_trays }}</td><td>{{ item.notes|default:'-' }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

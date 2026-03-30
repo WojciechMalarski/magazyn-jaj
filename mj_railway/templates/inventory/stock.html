@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h1>Magazyn</h1>
+  <table>
+    <tr><th>Rozmiar</th><th>Skrzynki</th><th>Wkładki</th><th>Sztuki</th></tr>
+    {% for row in rows %}
+      <tr><td>{{ row.size }}</td><td>{{ row.crates }}</td><td>{{ row.trays }}</td><td>{{ row.eggs }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

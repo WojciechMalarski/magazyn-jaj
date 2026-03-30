@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h1>{{ title }}</h1>
+  <form method="post" id="sale-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <h3>Pozycje</h3>
+    {{ formset.management_form }}
+    <table id="items-table">
+      <thead>
+        <tr>
+          <th>Rozmiar</th>
+          <th>Skrzynki</th>
+          <th>Wkładki</th>
+          <th>Cena / skrzynkę</th>
+          <th>Wartość</th>
+          <th>Usuń</th>
+        </tr>
+      </thead>
+      <tbody id="items-body">
+        {% for f in formset %}
+        <tr class="item-row">
+          {% for hidden in f.hidden_fields %}{{ hidden }}{% endfor %}
+          <td>{{ f.size }}</td>
+          <td>{{ f.crates }}</td>
+          <td>{{ f.trays }}</td>
+          <td>{{ f.price_per_crate }}</td>
+          <td><input type="text" class="line-total" value="0.00" readonly></td>
+          <td>{{ f.DELETE }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div style="margin:16px 0; display:flex; gap:12px; align-items:center;">
+      <button type="button" id="add-row">Dodaj pozycję</button>
+      <strong>Suma sprzedaży: <span id="sale-total">0.00</span> zł</strong>
+    </div>
+
+    <button type="submit">Zapisz</button>
+  </form>
+</div>
+
+<template id="empty-row-template">
+  <tr class="item-row">
+    {% with f=formset.empty_form %}
+      {% for hidden in f.hidden_fields %}{{ hidden }}{% endfor %}
+      <td>{{ f.size }}</td>
+      <td>{{ f.crates }}</td>
+      <td>{{ f.trays }}</td>
+      <td>{{ f.price_per_crate }}</td>
+      <td><input type="text" class="line-total" value="0.00" readonly></td>
+      <td>{{ f.DELETE }}</td>
+    {% endwith %}
+  </tr>
+</template>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const tableBody = document.getElementById('items-body');
+  const totalForms = document.getElementById('id_items-TOTAL_FORMS');
+  const addRowBtn = document.getElementById('add-row');
+  const saleTotalEl = document.getElementById('sale-total');
+  const emptyRowTemplate = document.getElementById('empty-row-template').innerHTML;
+
+  function parseNum(value) {
+    const normalized = String(value || '0').replace(',', '.');
+    const parsed = parseFloat(normalized);
+    return isNaN(parsed) ? 0 : parsed;
+  }
+
+  function isDeleted(row) {
+    const checkbox = row.querySelector('input[type="checkbox"][name$="-DELETE"]');
+    return checkbox ? checkbox.checked : false;
+  }
+
+  function calculateRow(row) {
+    const cratesInput = row.querySelector('input[name$="-crates"]');
+    const traysInput = row.querySelector('input[name$="-trays"]');
+    const priceInput = row.querySelector('input[name$="-price_per_crate"]');
+    const totalInput = row.querySelector('.line-total');
+
+    const crates = parseNum(cratesInput ? cratesInput.value : 0);
+    const trays = parseNum(traysInput ? traysInput.value : 0);
+    const price = parseNum(priceInput ? priceInput.value : 0);
+
+    let lineTotal = 0;
+    if (!isDeleted(row)) {
+      lineTotal = (crates + (trays / 12)) * price;
+    }
+    if (totalInput) totalInput.value = lineTotal.toFixed(2);
+    return lineTotal;
+  }
+
+  function calculateAll() {
+    let sum = 0;
+    tableBody.querySelectorAll('.item-row').forEach(function (row) {
+      sum += calculateRow(row);
+    });
+    saleTotalEl.textContent = sum.toFixed(2);
+  }
+
+  function bindRow(row) {
+    row.querySelectorAll('input, select').forEach(function (input) {
+      input.addEventListener('input', calculateAll);
+      input.addEventListener('change', calculateAll);
+    });
+  }
+
+  addRowBtn.addEventListener('click', function () {
+    const formIndex = parseInt(totalForms.value, 10);
+    const html = emptyRowTemplate.replace(/__prefix__/g, formIndex);
+    const wrapper = document.createElement('tbody');
+    wrapper.innerHTML = html.trim();
+    const newRow = wrapper.querySelector('.item-row');
+    tableBody.appendChild(newRow);
+    totalForms.value = formIndex + 1;
+    bindRow(newRow);
+    calculateAll();
+  });
+
+  tableBody.querySelectorAll('.item-row').forEach(bindRow);
+  calculateAll();
+});
+</script>
+{% endblock %}

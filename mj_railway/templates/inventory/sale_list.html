@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <div class="actions"><a class="btn" href="{% url 'sale_create' %}">Dodaj sprzedaż</a></div>
+  <h1>Sprzedaż</h1>
+  <form method="get">
+    <label>Filtr po dacie</label>
+    <input type="date" name="sale_date" value="{{ sale_date }}">
+    <button type="submit">Filtruj</button>
+  </form>
+  <table>
+    <tr><th>Data</th><th>Klient</th><th>Faktura</th><th>Płatność</th><th>Kwota</th><th></th></tr>
+    {% for sale in sales %}
+    <tr>
+      <td>{{ sale.sale_date }}</td>
+      <td>{{ sale.client.name }}</td>
+      <td>{{ sale.invoice_number }}</td>
+      <td>{{ sale.get_payment_method_display }}</td>
+      <td>{{ sale.total_amount }}</td>
+      <td><a href="{% url 'sale_edit' sale.pk %}">Edytuj</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

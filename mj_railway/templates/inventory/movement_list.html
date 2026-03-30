@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h1>Historia ruchów magazynowych</h1>
+  <table>
+    <tr><th>Data</th><th>Typ</th><th>Rozmiar</th><th>Ilość</th><th>Źródło</th><th>Uwagi</th></tr>
+    {% for row in rows %}
+    <tr>
+      <td>{{ row.obj.movement_date }}</td>
+      <td>{{ row.obj.get_movement_type_display }}</td>
+      <td>{{ row.obj.size }}</td>
+      <td>{{ row.sign }} {{ row.crates }} skrz. {{ row.trays }} wkł.</td>
+      <td>{{ row.obj.reference_type }} #{{ row.obj.reference_id }}</td>
+      <td>{{ row.obj.note|default:'-' }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

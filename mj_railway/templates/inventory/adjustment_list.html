@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <div class="actions"><a class="btn" href="{% url 'adjustment_create' %}">Dodaj korektę</a></div>
+  <h1>Korekty magazynu</h1>
+  <table>
+    <tr><th>Data</th><th>Rozmiar</th><th>Typ</th><th>Wkładki</th><th>Opis</th></tr>
+    {% for item in adjustments %}
+    <tr><td>{{ item.adjustment_date }}</td><td>{{ item.size }}</td><td>{{ item.get_adjustment_type_display }}</td><td>{{ item.quantity_in_trays }}</td><td>{{ item.reason|default:'-' }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

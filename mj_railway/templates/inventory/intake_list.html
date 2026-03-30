@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <div class="actions"><a class="btn" href="{% url 'intake_create' %}">Dodaj przyjęcie</a></div>
+  <h1>Przyjęcia</h1>
+  <table>
+    <tr><th>Data zniesienia</th><th>Suma wkładek</th><th>Data dodania</th><th></th></tr>
+    {% for intake in intakes %}
+    <tr>
+      <td>{{ intake.laying_date }}</td>
+      <td>{{ intake.total_trays }}</td>
+      <td>{{ intake.created_at|date:'Y-m-d H:i' }}</td>
+      <td><a href="{% url 'intake_edit' intake.pk %}">Edytuj</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

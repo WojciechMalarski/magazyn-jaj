@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Dashboard</h1>
+<div class="row">
+  <div class="card">
+    <h3>Dzisiejsza produkcja</h3>
+    <p><strong>{{ total_production.0 }}</strong> skrzynek i <strong>{{ total_production.1 }}</strong> wkładek</p>
+    <p class="small">{{ total_production_eggs }} sztuk jaj</p>
+  </div>
+  <div class="card">
+    <h3>Dzisiejsza sprzedaż</h3>
+    <p><strong>{{ todays_sales_total }}</strong> zł</p>
+  </div>
+</div>
+<div class="card">
+  <div class="actions">
+    <a class="btn" href="{% url 'intake_create' %}">Dodaj przyjęcie</a>
+    <a class="btn" href="{% url 'sale_create' %}">Dodaj sprzedaż</a>
+    <a class="btn" href="{% url 'client_create' %}">Dodaj klienta</a>
+    <a class="btn" href="{% url 'breakage_create' %}">Dodaj stłuczki</a>
+    <a class="btn" href="{% url 'adjustment_create' %}">Dodaj korektę</a>
+  </div>
+</div>
+<div class="card">
+  <h2>Stan magazynu</h2>
+  <table>
+    <tr><th>Rozmiar</th><th>Skrzynki</th><th>Wkładki</th><th>Sztuki</th></tr>
+    {% for row in stock_rows %}
+    <tr><td>{{ row.size }}</td><td>{{ row.crates }}</td><td>{{ row.trays }}</td><td>{{ row.eggs }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+<div class="card">
+  <h2>Dzisiejsza produkcja wg rozmiarów</h2>
+  <table>
+    <tr><th>Rozmiar</th><th>Skrzynki</th><th>Wkładki</th><th>Sztuki</th></tr>
+    {% for row in production_rows %}
+    <tr><td>{{ row.size }}</td><td>{{ row.crates }}</td><td>{{ row.trays }}</td><td>{{ row.eggs }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

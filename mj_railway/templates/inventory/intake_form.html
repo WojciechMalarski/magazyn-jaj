@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load inventory_extras %}
+{% block content %}
+<div class="card">
+  <h1>{{ title }}</h1>
+  <form method="post">
+    {% csrf_token %}
+    <p>{{ form.laying_date.label_tag }} {{ form.laying_date }}</p>
+    <p>{{ form.notes.label_tag }} {{ form.notes }}</p>
+    <table>
+      <tr><th>Rozmiar</th><th>Skrzynki</th><th>Wkładki</th></tr>
+      {% for code, label in sizes %}
+      <tr>
+        <td>{{ label }}</td>
+        <td>{{ form|get_item:code|safe }}</td>
+        <td>{{ form|get_item_trays:code|safe }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <button type="submit">Zapisz</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <div class="actions"><a class="btn" href="{% url 'client_create' %}">Dodaj klienta</a></div>
+  <h1>Klienci</h1>
+  <form method="get">
+    <input type="text" name="q" value="{{ q }}" placeholder="Szukaj po nazwie lub NIP">
+  </form>
+  <table>
+    <tr><th>Nazwa</th><th>NIP</th><th>Aktywny</th><th></th></tr>
+    {% for client in clients %}
+    <tr>
+      <td>{{ client.name }}</td><td>{{ client.nip|default:'-' }}</td><td>{{ client.is_active|yesno:'tak,nie' }}</td>
+      <td><a href="{% url 'client_edit' client.pk %}">Edytuj</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
