@@ -1,3 +1,4 @@
+import dj_database_url
 import os
 from pathlib import Path
 import dj_database_url
@@ -65,18 +66,9 @@ if os.getenv('DATABASE_URL'):
         )
     }
 elif os.getenv('PGDATABASE'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('PGDATABASE'),
-            'USER': os.getenv('PGUSER'),
-            'PASSWORD': os.getenv('PGPASSWORD'),
-            'HOST': os.getenv('PGHOST', 'localhost'),
-            'PORT': os.getenv('PGPORT', '5432'),
-            'CONN_MAX_AGE': 600,
-            'OPTIONS': {'sslmode': 'require'} if os.getenv('DB_SSL_REQUIRED', 'true').lower() == 'true' else {},
-        }
-    }
+DATABASES = {
+    'default': dj_database_url.config(default='sqlite:///db.sqlite3')
+}
 else:
     DATABASES = {
         'default': {

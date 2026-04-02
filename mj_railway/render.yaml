@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: magazyn-jaj
+    env: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn magazyn.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DJANGO_SETTINGS_MODULE
+        value: magazyn.settings
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 2
+      - key: DATABASE_URL
+        fromDatabase:
+          name: magazyn-jaj-db
+          property: connectionString
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+
+databases:
+  - name: magazyn-jaj-db
+    plan: free
